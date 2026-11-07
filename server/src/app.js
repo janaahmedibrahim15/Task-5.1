@@ -1,3 +1,4 @@
+import mongoSanitize from 'express-mongo-sanitize';
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -7,6 +8,8 @@ import userRoutes from './routes/users.js';
 import instructorRoutes from './routes/instructors.js';
 
 const app = express();
+app.use(express.json());
+app.use(mongoSanitize());
 
 app.use(morgan('dev'));
 app.use(cors({ origin: 'http://localhost:5175', credentials: false }));

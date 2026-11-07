@@ -4,8 +4,10 @@ import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
 import { Instructor } from '../models/Instructor.js';
 
-// Seed data for the Instructor Portal NoSQL injection lab.
-// Passwords are plaintext ON PURPOSE (see Instructor model / Flow.md).
+// Seed data for the Instructor Portal.
+// Passwords are written here in plain text only as seed input.
+// The Instructor model hashes them with bcrypt before they are stored,
+// because we use create() (which runs the pre-save hook), not insertMany().
 const instructors = [
   {
     name: 'Prof. Alice Smith',
@@ -35,7 +37,7 @@ const instructors = [
     privatePhone: '+1-555-0103'
   },
   {
-    // The high-value target: the only superadmin, holding the API key.
+    // The only superadmin, holding the API key.
     name: 'Portal Administrator',
     username: 'admin',
     password: 'S3cr3t-Admin-Pw!',
@@ -50,7 +52,13 @@ const instructors = [
 async function run() {
   await connectDB();
   await Instructor.deleteMany({});
-  const created = await Instructor.insertMany(instructors);
+
+  // create() runs the bcrypt pre-save hook; insertMany() would skip it
+  const created = [];
+  for (const data of instructors) {
+    created.push(await Instructor.create(data));
+  }
+
   console.log(`Seeded ${created.length} instructor(s):`);
   for (const i of created) {
     console.log(`  - ${i.username} (${i.role})`);

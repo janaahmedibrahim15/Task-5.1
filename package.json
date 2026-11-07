@@ -11,5 +11,10 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express-mongo-sanitize": "^2.2.0",
+    "joi": "^18.3.2"
   }
 }
